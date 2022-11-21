@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
        * Pagination buttons
        */
       this.$el.addEventListener("click", e => {
-        if (e.target.classList.contains("btn") && e.target.parentElement.parentElement.classList.contains("help--slides-pagination")) {
+        if (e.target.classList.contains("btn") && e.target.parentElement.classList.contains("help--slides-pagination")) {
           this.changePage(e);
         }
       });
@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", function() {
     changeSlide(e) {
       e.preventDefault();
       const $btn = e.target;
-
       // Buttons Active class change
       [...this.$buttonsContainer.children].forEach(btn => btn.firstElementChild.classList.remove("active"));
       $btn.classList.add("active");
@@ -49,7 +48,6 @@ document.addEventListener("DOMContentLoaded", function() {
       // Slides active class change
       this.$slidesContainers.forEach(el => {
         el.classList.remove("active");
-
         if (el.dataset.id === this.currentSlide) {
           el.classList.add("active");
         }
