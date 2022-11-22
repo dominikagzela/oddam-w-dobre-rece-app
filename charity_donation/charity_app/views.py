@@ -15,9 +15,13 @@ from django.views.generic import (
     DeleteView,
     RedirectView,
 )
+from charity_app.forms import RegisterUserForm
 from charity_app.models import Category, Institution, Donation
 from django.core.paginator import Paginator
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth import get_user_model, authenticate, login, logout
 
+User = get_user_model()
 
 class LandingPageView(View):
     def get(self, request):
@@ -58,9 +62,35 @@ class LoginView(View):
         return render(request, 'login.html')
 
 
-class RegisterView(View):
-    def get(self, request):
-        return render(request, 'register.html')
+# class RegisterView(View):
+#     def get(self, request):
+#         return render(request, 'register.html')
+# PermissionRequiredMixin
+
+class RegisterView(FormView):
+    template_name = 'register.html'
+    form_class = RegisterUserForm
+    success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        cd = form.cleaned_data
+        email = cd['email']
+        if User.objects.filter(username=email).exists():
+            return HttpResponse('Użytkownik z takim mailem już istnieje!')
+
+        password1 = cd['password1']
+        password2 = cd['password2']
+        if password1 != password2:
+            return HttpResponse('Hasla nie są identyczne!')
+
+        User.objects.create_user(
+            username=cd['email'],
+            first_name=cd['name'],
+            last_name=cd['surname'],
+            password=cd['password2'],
+        )
+
+        return super().form_valid(form)
 
 
 class AddDonationView(View):

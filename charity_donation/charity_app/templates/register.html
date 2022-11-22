@@ -23,22 +23,24 @@
 
 <section class="login-page">
     <h2>Załóż konto</h2>
-    <form>
-        <div class="form-group">
-            <input type="text" name="name" placeholder="Imię"/>
-        </div>
-        <div class="form-group">
-            <input type="text" name="surname" placeholder="Nazwisko"/>
-        </div>
-        <div class="form-group">
-            <input type="email" name="email" placeholder="Email"/>
-        </div>
-        <div class="form-group">
-            <input type="password" name="password" placeholder="Hasło"/>
-        </div>
-        <div class="form-group">
-            <input type="password" name="password2" placeholder="Powtórz hasło"/>
-        </div>
+
+    <form method="post">
+        {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="Imię" required id="id_name"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="surname" placeholder="Nazwisko" required id="id_surname"/>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Email" required id="id_email"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password1" placeholder="Hasło" required id="id_password1"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password2" placeholder="Powtórz hasło" required id="id_password2"/>
+                </div>
 
         <div class="form-group form-group--buttons">
             <a href="/login" class="btn btn--without-border">Zaloguj się</a>
