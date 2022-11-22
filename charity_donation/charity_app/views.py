@@ -15,13 +15,14 @@ from django.views.generic import (
     DeleteView,
     RedirectView,
 )
-from charity_app.forms import RegisterUserForm
+from charity_app.forms import RegisterUserForm, LoginUserForm
 from charity_app.models import Category, Institution, Donation
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 User = get_user_model()
+
 
 class LandingPageView(View):
     def get(self, request):
@@ -57,15 +58,24 @@ class LandingPageView(View):
         return render(request, 'index.html', ctx)
 
 
-class LoginView(View):
-    def get(self, request):
-        return render(request, 'login.html')
+class LoginView(FormView):
+    template_name = 'login.html'
+    form_class = LoginUserForm
+    success_url = reverse_lazy('landing-page')
 
+    def form_valid(self, form):
+        cd = form.cleaned_data
+        username = cd['email']
+        password = cd['password']
+        user = authenticate(self.request, username=username, password=password)
+        if user is not None:
+            login(self.request, user)
+            return super().form_valid(form)
+        elif not User.objects.filter(username=username).exists():
+            return HttpResponseRedirect(reverse_lazy('register'))
+        else:
+            return HttpResponse('Błędne dane logowania')
 
-# class RegisterView(View):
-#     def get(self, request):
-#         return render(request, 'register.html')
-# PermissionRequiredMixin
 
 class RegisterView(FormView):
     template_name = 'register.html'
