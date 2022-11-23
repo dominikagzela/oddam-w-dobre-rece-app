@@ -107,4 +107,11 @@ class LogoutView(RedirectView):
 
 class AddDonationView(View):
     def get(self, request):
-        return render(request, 'form.html')
+        if request.user.is_authenticated:
+            categories = Category.objects.all().order_by('name')
+            ctx = {
+                "categories": categories,
+            }
+            return render(request, 'form.html', ctx)
+        else:
+            return HttpResponseRedirect(reverse_lazy('login'))
