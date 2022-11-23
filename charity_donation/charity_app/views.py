@@ -64,6 +64,22 @@ class LandingPageView(View):
         return render(request, 'index.html', ctx)
 
 
+class RegisterView(FormView):
+    template_name = 'register.html'
+    form_class = RegisterUserForm
+    success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        cd = form.cleaned_data
+        User.objects.create_user(
+            username=cd['email'],
+            first_name=cd['name'],
+            last_name=cd['surname'],
+            password=cd['password2'],
+        )
+        return super().form_valid(form)
+
+
 class LoginView(FormView):
     template_name = 'login.html'
     form_class = LoginUserForm
@@ -81,20 +97,12 @@ class LoginView(FormView):
             return HttpResponseRedirect(reverse_lazy('register'))
 
 
-class RegisterView(FormView):
-    template_name = 'register.html'
-    form_class = RegisterUserForm
-    success_url = reverse_lazy('login')
+class LogoutView(RedirectView):
+    url = reverse_lazy('landing-page')
 
-    def form_valid(self, form):
-        cd = form.cleaned_data
-        User.objects.create_user(
-            username=cd['email'],
-            first_name=cd['name'],
-            last_name=cd['surname'],
-            password=cd['password2'],
-        )
-        return super().form_valid(form)
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return super().get(request, *args, **kwargs)
 
 
 class AddDonationView(View):
