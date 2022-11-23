@@ -33,20 +33,22 @@ class LandingPageView(View):
         list_of_foundations = list(Institution.objects.filter(type=1))
         random.shuffle(list_of_foundations)
         paginator_foundations = Paginator(list_of_foundations, 3)
-        page1 = request.GET.get('page1')
+        page1 = request.GET.get('page1', 1)
         three_foundations = paginator_foundations.get_page(page1)
 
         list_of_organisations = list(Institution.objects.filter(type=2))
         random.shuffle(list_of_organisations)
         paginator_organisations = Paginator(list_of_organisations, 3)
-        page2 = request.GET.get('page2')
+        page2 = request.GET.get('page2', 1)
         three_organisations = paginator_organisations.get_page(page2)
 
         list_of_local_organisations = list(Institution.objects.filter(type=3))
         random.shuffle(list_of_local_organisations)
         paginator_local_organisations = Paginator(list_of_local_organisations, 3)
-        page3 = request.GET.get('page3')
+        page3 = request.GET.get('page3', 1)
         three_local_organisations = paginator_local_organisations.get_page(page3)
+
+        active_page = request.GET.get('active_page', '1')
 
         ctx = {
             "number_of_bags": number_of_bags,
@@ -54,6 +56,10 @@ class LandingPageView(View):
             "three_foundations": three_foundations,
             "three_organisations": three_organisations,
             "three_local_organisations": three_local_organisations,
+            "active_page": active_page,
+            "page1": int(page1),
+            "page2": int(page2),
+            "page3": int(page3),
         }
         return render(request, 'index.html', ctx)
 
@@ -71,10 +77,8 @@ class LoginView(FormView):
         if user is not None:
             login(self.request, user)
             return super().form_valid(form)
-        elif not User.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists():
             return HttpResponseRedirect(reverse_lazy('register'))
-        else:
-            return HttpResponse('Błędne dane logowania')
 
 
 class RegisterView(FormView):
@@ -84,26 +88,15 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         cd = form.cleaned_data
-        email = cd['email']
-        if User.objects.filter(username=email).exists():
-            return HttpResponse('Użytkownik z takim mailem już istnieje!')
-
-        password1 = cd['password1']
-        password2 = cd['password2']
-        if password1 != password2:
-            return HttpResponse('Hasla nie są identyczne!')
-
         User.objects.create_user(
             username=cd['email'],
             first_name=cd['name'],
             last_name=cd['surname'],
             password=cd['password2'],
         )
-
         return super().form_valid(form)
 
 
 class AddDonationView(View):
     def get(self, request):
         return render(request, 'form.html')
-

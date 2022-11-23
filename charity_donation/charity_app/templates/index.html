@@ -93,13 +93,16 @@
     <h2>Komu pomagamy?</h2>
 
     <ul class="help--buttons">
-        <li data-id="1"><a href="#" class="btn btn--without-border active">Fundacjom</a></li>
-        <li data-id="2"><a href="#" class="btn btn--without-border">Organizacjom pozarządowym</a></li>
-        <li data-id="3"><a href="#" class="btn btn--without-border">Lokalnym zbiórkom</a></li>
+        <li data-id="1"><a href="#" class="btn btn--without-border {% if active_page == '1' %} active {% endif %}">Fundacjom</a>
+        </li>
+        <li data-id="2"><a href="#" class="btn btn--without-border {% if active_page == '2' %} active {% endif %}">Organizacjom
+            pozarządowym</a></li>
+        <li data-id="3"><a href="#" class="btn btn--without-border {% if active_page == '3' %} active {% endif %}">Lokalnym
+            zbiórkom</a></li>
     </ul>
 
     <!-- SLIDE 1 -->
-    <div class="help--slides active" data-id="1">
+    <div class="help--slides {% if active_page == '1' %} active {% endif %}" data-id="1">
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się
             zajmują, komu pomagają i czego potrzebują.</p>
 
@@ -124,14 +127,16 @@
 
         <ul class="help--slides-pagination">
             {% for page in three_foundations.paginator.page_range %}
-            <li><a href="?page1={{ page }}#help" class="btn btn--small btn--without-border" data-page={{ page }}>{{ page }}</a></li>
+            <li><a href="?page1={{ page }}&active_page=1#help"
+                   class="btn btn--small btn--without-border {% if page == page1 %} active {% endif %}" data-page={{
+                   page }}>{{ page }}</a></li>
             {% endfor %}
         </ul>
     </div>
 
 
     <!-- SLIDE 2 -->
-    <div class="help--slides" data-id="2">
+    <div class="help--slides {% if active_page == '2' %} active {% endif %}" data-id="2">
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się
             zajmują, komu pomagają i czego potrzebują.</p>
         <ul class="help--slides-items">
@@ -153,15 +158,17 @@
             {% endfor %}
         </ul>
         <ul class="help--slides-pagination">
-            {% for page2 in three_organisations.paginator.page_range %}
-            <li><a href="?page2={{ page2 }}#help" class="btn btn--small btn--without-border" data-page={{ page2 }}>{{ page2 }}</a></li>
+            {% for page in three_organisations.paginator.page_range %}
+            <li><a href="?page2={{ page }}&active_page=2#help"
+                   class="btn btn--small btn--without-border {% if page == page2 %} active {% endif %}"
+                   data-page={{ page }}>{{ page }}</a></li>
             {% endfor %}
         </ul>
 
     </div>
 
     <!-- SLIDE 3 -->
-    <div class="help--slides" data-id="3">
+    <div class="help--slides {% if active_page == 3 %} active {% endif %}" data-id="3">
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się
             zajmują, komu pomagają i czego potrzebują.</p>
         <ul class="help--slides-items">
@@ -182,6 +189,13 @@
                 {% endfor %}
         </ul>
 
+        <ul class="help--slides-pagination">
+            {% for page in three_organisations.paginator.page_range %}
+            <li><a href="?page3={{ page }}&active_page=2#help"
+                   class="btn btn--small btn--without-border {% if page == page3 %} active {% endif %}"
+                   data-page={{ page }}>{{ page }}</a></li>
+            {% endfor %}
+        </ul>
         <!-- Pagination
         <ul class="help--slides-pagination">
           <li><a href="#" class="btn btn--small btn--without-border active" data-page="1">1</a></li>

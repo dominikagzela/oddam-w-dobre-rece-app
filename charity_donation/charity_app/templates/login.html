@@ -25,13 +25,19 @@
     <h2>Zaloguj się</h2>
     <form method="post">
         {% csrf_token %}
+        {% for field in form %}
         <div class="form-group">
-            <input type="email" name="email" placeholder="Email" required id="id_email"/>
+            {{ field }}
+            {{ field.errors }}
         </div>
-        <div class="form-group">
-            <input type="password" name="password" placeholder="Hasło" required id="id_password"/>
-            <a href="#" class="btn btn--small btn--without-border reset-password">Przypomnij hasło</a>
-        </div>
+        {% endfor %}
+
+<!--        <input type="email" name="email" placeholder="Email" required id="id_email"/>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <input type="password" name="password" placeholder="Hasło" required id="id_password"/>-->
+<!--            <a href="#" class="btn btn&#45;&#45;small btn&#45;&#45;without-border reset-password">Przypomnij hasło</a>-->
+<!--        </div>-->
 
         <div class="form-group form-group--buttons">
             <a href="/register" class="btn btn--without-border">Załóż konto</a>
