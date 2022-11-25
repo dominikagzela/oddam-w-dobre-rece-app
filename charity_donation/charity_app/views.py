@@ -76,6 +76,7 @@ class RegisterView(FormView):
             first_name=cd['name'],
             last_name=cd['surname'],
             password=cd['password2'],
+            email=cd['email'],
         )
         return super().form_valid(form)
 
@@ -109,8 +110,13 @@ class AddDonationView(View):
     def get(self, request):
         if request.user.is_authenticated:
             categories = Category.objects.all().order_by('name')
+            institutions = Institution.objects.all().order_by('name')
+            # institutions_all = Institution.objects.values().order_by('name')
+            # institutions = list(institutions_all)
+            # print(institutions)
             ctx = {
                 "categories": categories,
+                "institutions": institutions,
             }
             return render(request, 'form.html', ctx)
         else:

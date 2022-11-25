@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$prev = form.querySelectorAll(".prev-step");
       this.$step = form.querySelector(".form--steps-counter span");
       this.currentStep = 1;
-
+      this.$categories = form.querySelectorAll('.data-categories-id');
       this.$stepInstructions = form.querySelectorAll(".form--steps-instructions p");
       const $stepForms = form.querySelectorAll("form > div");
       this.slides = [...this.$stepInstructions, ...$stepForms];
@@ -191,10 +191,69 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     events() {
       // Next step
+      const ourCategories = []
+      const ourCategoriesNames = []
+      let ourCategoriesString = ''
       this.$next.forEach(btn => {
         btn.addEventListener("click", e => {
           e.preventDefault();
           this.currentStep++;
+          if(this.currentStep === 2) {
+             this.$categoriesCheckboxes = form.querySelectorAll('.category-input:checked')
+            this.$categoriesCheckboxes.forEach((checkbox) => {
+              ourCategories.push(parseInt(checkbox.value)) // CATEGORIES
+              ourCategoriesNames.push(checkbox.nextElementSibling.nextElementSibling.innerHTML)
+            });
+            this.$categories.forEach((item) => {
+            const currentCategoryID = parseInt(item.dataset['category'])
+            if (ourCategories.includes(currentCategoryID)){
+              const currentInstitutionID = item.dataset['institution']
+              document.getElementById(currentInstitutionID).style.display = 'block'
+            }
+          })
+          }
+          if(this.currentStep === 3) {
+            this.$bags = form.querySelector('[name="bags"]'); // BAGS
+          }
+          if(this.currentStep === 4) {
+            this.$institution = form.querySelector('.institution-input:checked'); // INSTITUTION
+          }
+          if(this.currentStep === 5) {
+            this.$street = form.querySelector('[name="address"]'); // STREET
+            this.$city = form.querySelector('[name="city"]'); // CITY
+            this.$postcode = form.querySelector('[name="postcode"]'); // POSTCODE
+            this.$phone = form.querySelector('[name="phone"]'); // NUMBER PHONE
+            this.$data = form.querySelector('[name="data"]'); // DATE
+            this.$time = form.querySelector('[name="time"]'); // TIME
+            this.$more_info = form.querySelector('[name="more_info"]'); // MORE INFO
+
+            console.log(ourCategoriesNames);
+            console.log(ourCategoriesString);
+            ourCategoriesNames.forEach((item, key) => {
+            if(key !== ourCategoriesNames.length - 1) {
+              ourCategoriesString = ourCategoriesString + item + ', '
+            } else {
+              ourCategoriesString = ourCategoriesString + item
+            }
+          })
+
+            form.querySelector('.icon-bag').nextElementSibling.textContent=
+                ('Worki: '+ this.$bags.value + ' (' + ourCategoriesString + ')');
+            form.querySelector('.icon-hand').nextElementSibling.textContent=
+                ('Dla: '+ this.$institution.value);
+
+            const addressInfo = form.querySelector('.address-info').children
+            addressInfo[0].innerHTML = this.$street.value
+            addressInfo[1].innerHTML = this.$city.value
+            addressInfo[2].innerHTML = this.$postcode.value
+            addressInfo[3].innerHTML = this.$phone.value
+
+            const receiptInfo = form.querySelector('.receipt-info').children
+            receiptInfo[0].innerHTML = this.$data.value
+            receiptInfo[1].innerHTML = this.$time.value
+            receiptInfo[2].innerHTML = this.$more_info.value
+          }
+
           this.updateForm();
         });
       });
@@ -203,6 +262,9 @@ document.addEventListener("DOMContentLoaded", function() {
       this.$prev.forEach(btn => {
         btn.addEventListener("click", e => {
           e.preventDefault();
+          if(this.currentStep === 2) {
+            document.querySelector('.institution').style.display = 'none'
+          }
           this.currentStep--;
           this.updateForm();
         });
@@ -218,7 +280,6 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     updateForm() {
       this.$step.innerText = this.currentStep;
-
       // TODO: Validation
 
       this.slides.forEach(slide => {
