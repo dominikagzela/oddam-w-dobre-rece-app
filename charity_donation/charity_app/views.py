@@ -222,8 +222,10 @@ class UserProfileView(ListView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         current_user = User.objects.get(id=user.id)
-        print(current_user)
+        user_donation = Donation.objects.get(user=user.id)
+
         ctx = {
             'current_user': current_user,
+            "user_donation": user_donation
         }
         return ctx

@@ -5,16 +5,34 @@
 
 </header>
 
-
 <section class="login-page">
     <div class="slogan container container--90">
-        <h2>
-            Twój profil
-        </h2>
+        <h2>Twój profil</h2>
         <br/>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">IMIĘ : </span> {{ current_user.first_name }} </h3>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">NAZWISKO : </span> {{ current_user.last_name }} </h3>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">EMAIL : </span> {{ current_user.username }} </h3>
+        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            IMIĘ : </span> {{ current_user.first_name }} </h3>
+        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            NAZWISKO : </span> {{ current_user.last_name }} </h3>
+        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            EMAIL : </span> {{ current_user.username }} </h3>
+        <br/>
+        <h3 style="text-align: center; font-size: 30px">
+            Oddane darowizny:</h3>
+        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            ILOŚĆ WORKÓW : </span> {{ user_donation.quantity }} </h3>
+        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            KATEGORIE : </span>
+            {% for category in user_donation.categories.all %}
+                {% if forloop.last %}
+                    {{ category.name }}
+                {% else %}
+                    {{ category.name }},
+                {% endif %}
+            {% endfor %}</h3>
+        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            DLA ORGANIZACJI : </span> {{ user_donation.institution.name }} </h3>
+        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            TERMIN ODBIORU : </span> {{ user_donation.pick_up_date }} godz. {{ user_donation.pick_up_time }}</h3>
     </div>
 </section>
 
