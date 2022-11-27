@@ -12,10 +12,10 @@
 <body>
 {% if request.resolver_match.url_name == 'landing-page' %}
 <header class="header--main-page">
-    {% elif request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'register' %}
-    <header>
-        {% elif request.resolver_match.url_name == 'add-donation' %}
-        <header class="header--form-page">
+    {% elif request.resolver_match.url_name == 'add-donation' %}
+    <header class="header--form-page">
+        {% else %}
+        <header>
             {% endif %}
 
             <nav class="container container--70">

@@ -215,6 +215,15 @@ class ConfirmationView(View):
         return render(request, 'form-confirmation.html')
 
 
-class UserProfileView(View):
-    def get(self, request):
-        return render(request, 'user-profile.html')
+class UserProfileView(ListView):
+    model = User
+    template_name = 'user-profile.html'
+
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+        current_user = User.objects.get(id=user.id)
+        print(current_user)
+        ctx = {
+            'current_user': current_user,
+        }
+        return ctx
