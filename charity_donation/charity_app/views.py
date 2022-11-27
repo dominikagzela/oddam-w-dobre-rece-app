@@ -15,7 +15,7 @@ from django.views.generic import (
     DeleteView,
     RedirectView,
 )
-from charity_app.forms import RegisterUserForm, LoginUserForm
+from charity_app.forms import RegisterUserForm, LoginUserForm, DonationForm
 from charity_app.models import Category, Institution, Donation
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -106,18 +106,110 @@ class LogoutView(RedirectView):
         return super().get(request, *args, **kwargs)
 
 
+# class AddDonationView(FormView):
+#     template_name = 'form.html'
+#     form_class = DonationForm
+#     success_url = reverse_lazy('confirmation')
+#
+#     def get(self, request):
+#         if request.user.is_authenticated:
+#             categories = Category.objects.all().order_by('name')
+#             institutions = Institution.objects.all().order_by('name')
+#             ctx = {
+#                 "categories": categories,
+#                 "institutions": institutions,
+#             }
+#             return render(request, 'form.html', ctx)
+#         else:
+#             return HttpResponseRedirect(reverse_lazy('login'))
+#
+#     def form_valid(self, request, form):
+#         cd = form.cleaned_data
+#         user = request.user
+#         print('bags: ', cd['bags'])
+#         print('categories: ', cd['categories'])
+#         print('institution: ', cd['institution'])
+#         print('address: ', cd['address'])
+#         print('phone: ', cd['phone'])
+#         print('city: ', cd['city'])
+#         print('postcode: ', cd['postcode'])
+#         print('date: ', cd['date'])
+#         print('time: ', cd['time'])
+#         print('more_info: ', cd['more_info'])
+#         print('user: ', user)
+#
+#         Donation.objects.create(
+#             quantity=cd['bags'],
+#             categories=cd['categories'],
+#             institution=cd['institution'],
+#             address=cd['address'],
+#             phone_number=cd['phone'],
+#             city=cd['city'],
+#             zip_code=cd['postcode'],
+#             pick_up_date=cd['date'],
+#             pick_up_time=cd['time'],
+#             pick_up_comment=cd['more_info'],
+#             user=user,
+#         )
+#         return super().form_valid(form)
+
 class AddDonationView(View):
+    template_name = 'form.html'
+    form_class = DonationForm
+    success_url = reverse_lazy('confirmation')
+
     def get(self, request):
         if request.user.is_authenticated:
             categories = Category.objects.all().order_by('name')
             institutions = Institution.objects.all().order_by('name')
-            # institutions_all = Institution.objects.values().order_by('name')
-            # institutions = list(institutions_all)
-            # print(institutions)
+            form = self.form_class()
             ctx = {
                 "categories": categories,
                 "institutions": institutions,
+                "form": form
             }
             return render(request, 'form.html', ctx)
         else:
             return HttpResponseRedirect(reverse_lazy('login'))
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+
+        if form.is_valid():
+            cd = form.cleaned_data
+            # user = request.user
+            user = 3
+            print('bags: ', cd['quantity'])
+            print('categories: ', cd['categories'])
+            print('institution: ', cd['institution'])
+            print('address: ', cd['address'])
+            print('phone: ', cd['phone_number'])
+            print('city: ', cd['city'])
+            print('postcode: ', cd['zip_code'])
+            print('date: ', cd['pick_up_date'])
+            print('time: ', cd['pick_up_time'])
+            print('more_info: ', cd['pick_up_comment'])
+            print('user: ', user)
+
+            Donation.objects.create(
+                quantity=cd['quantity'],
+                categories=cd['categories'],
+                institution=cd['institution'],
+                address=cd['address'],
+                phone_number=cd['phone_number'],
+                city=cd['city'],
+                zip_code=cd['zip_code'],
+                pick_up_date=cd['pick_up_date'],
+                pick_up_time=cd['pick_up_time'],
+                pick_up_comment=cd['pick_up_comment'],
+                user=user,
+            )
+        # ctx = {'form': form}
+        # return render(request, 'form.html', ctx)
+            return HttpResponseRedirect(reverse_lazy('confirmation'))
+        return HttpResponseRedirect(reverse_lazy('login'))
+
+
+class ConfirmationView(View):
+    def get(self, request):
+        return render(request, 'form-confirmation.html')

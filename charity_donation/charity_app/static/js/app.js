@@ -227,8 +227,6 @@ document.addEventListener("DOMContentLoaded", function() {
             this.$time = form.querySelector('[name="time"]'); // TIME
             this.$more_info = form.querySelector('[name="more_info"]'); // MORE INFO
 
-            console.log(ourCategoriesNames);
-            console.log(ourCategoriesString);
             ourCategoriesNames.forEach((item, key) => {
             if(key !== ourCategoriesNames.length - 1) {
               ourCategoriesString = ourCategoriesString + item + ', '
@@ -303,6 +301,7 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     submit(e) {
       e.preventDefault();
+      alert('submit')
       this.currentStep++;
       this.updateForm();
     }

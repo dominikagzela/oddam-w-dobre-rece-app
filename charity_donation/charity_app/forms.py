@@ -44,3 +44,26 @@ class LoginUserForm(forms.Form):
         if user is None:
             raise ValidationError('Dane logowania nie są prawidłowe!')
         return password
+
+
+# class DonationForm(forms.ModelForm):
+#     class Meta:
+#         model = Donation
+#         fields = '__all__'
+
+
+class DonationForm(forms.Form):
+    quantity = forms.IntegerField()
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
+    institution = forms.CharField()
+    address = forms.CharField()
+    phone_number = forms.IntegerField()
+    city = forms.CharField(max_length=50)
+    zip_code = forms.CharField(max_length=6)
+    pick_up_date = forms.DateField()
+    pick_up_time = forms.TimeField()
+    pick_up_comment = forms.CharField()
+    user = forms.ModelChoiceField(queryset=User.objects.all())
