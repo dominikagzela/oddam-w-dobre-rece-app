@@ -213,3 +213,8 @@ class AddDonationView(View):
 class ConfirmationView(View):
     def get(self, request):
         return render(request, 'form-confirmation.html')
+
+
+class UserProfileView(View):
+    def get(self, request):
+        return render(request, 'user-profile.html')

@@ -23,6 +23,7 @@ from charity_app.views import (
     RegisterView,
     AddDonationView,
     ConfirmationView,
+    UserProfileView,
 )
 
 urlpatterns = [
@@ -33,4 +34,5 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('add_donation/', AddDonationView.as_view(), name='add-donation'),
     path('confirmation/', ConfirmationView.as_view(), name='confirmation'),
+    path('user_profile/', UserProfileView.as_view(), name='user_profile'),
 ]
