@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function() {
           })
           }
           if(this.currentStep === 3) {
-            this.$bags = form.querySelector('[name="bags"]'); // BAGS
+            this.$quantity = form.querySelector('[name="quantity"]'); // BAGS
           }
           if(this.currentStep === 4) {
             this.$institution = form.querySelector('.institution-input:checked'); // INSTITUTION
@@ -221,11 +221,11 @@ document.addEventListener("DOMContentLoaded", function() {
           if(this.currentStep === 5) {
             this.$street = form.querySelector('[name="address"]'); // STREET
             this.$city = form.querySelector('[name="city"]'); // CITY
-            this.$postcode = form.querySelector('[name="postcode"]'); // POSTCODE
-            this.$phone = form.querySelector('[name="phone"]'); // NUMBER PHONE
-            this.$data = form.querySelector('[name="data"]'); // DATE
-            this.$time = form.querySelector('[name="time"]'); // TIME
-            this.$more_info = form.querySelector('[name="more_info"]'); // MORE INFO
+            this.$zip_code = form.querySelector('[name="zip_code"]'); // POSTCODE
+            this.$phone_number = form.querySelector('[name="phone_number"]'); // NUMBER PHONE
+            this.$data = form.querySelector('[name="pick_up_date"]'); // DATE
+            this.$time = form.querySelector('[name="pick_up_time"]'); // TIME
+            this.$more_info = form.querySelector('[name="pick_up_comment"]'); // MORE INFO
 
             ourCategoriesNames.forEach((item, key) => {
             if(key !== ourCategoriesNames.length - 1) {
@@ -236,15 +236,15 @@ document.addEventListener("DOMContentLoaded", function() {
           })
 
             form.querySelector('.icon-bag').nextElementSibling.textContent=
-                ('Worki: '+ this.$bags.value + ' (' + ourCategoriesString + ')');
+                ('Worki: '+ this.$quantity.value + ' (' + ourCategoriesString + ')');
             form.querySelector('.icon-hand').nextElementSibling.textContent=
                 ('Dla: '+ this.$institution.value);
 
             const addressInfo = form.querySelector('.address-info').children
             addressInfo[0].innerHTML = this.$street.value
             addressInfo[1].innerHTML = this.$city.value
-            addressInfo[2].innerHTML = this.$postcode.value
-            addressInfo[3].innerHTML = this.$phone.value
+            addressInfo[2].innerHTML = this.$zip_code.value
+            addressInfo[3].innerHTML = this.$phone_number.value
 
             const receiptInfo = form.querySelector('.receipt-info').children
             receiptInfo[0].innerHTML = this.$data.value
@@ -300,10 +300,11 @@ document.addEventListener("DOMContentLoaded", function() {
      * TODO: validation, send data to server
      */
     submit(e) {
-      e.preventDefault();
-      alert('submit')
+      if(this.currentStep < 5 ){
+              e.preventDefault();
       this.currentStep++;
       this.updateForm();
+      }
     }
   }
   const form = document.querySelector(".form--steps");

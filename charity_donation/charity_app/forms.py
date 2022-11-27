@@ -3,7 +3,6 @@ from django.core.exceptions import ValidationError
 from .models import Category, Institution, Donation
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.forms import PasswordChangeForm
-from django.core.validators import EmailValidator, URLValidator
 
 User = get_user_model()
 
@@ -47,12 +46,6 @@ class LoginUserForm(forms.Form):
         return password
 
 
-# class DonationForm(forms.ModelForm):
-#     class Meta:
-#         model = Donation
-#         fields = '__all__'
-
-
 class DonationForm(forms.Form):
     quantity = forms.IntegerField()
     categories = forms.ModelMultipleChoiceField(
@@ -67,7 +60,7 @@ class DonationForm(forms.Form):
     pick_up_date = forms.DateField()
     pick_up_time = forms.TimeField()
     pick_up_comment = forms.CharField()
-    user = forms.ModelChoiceField(queryset=User.objects.all())
+    # user = forms.ModelChoiceField(queryset=User.objects.all())
 
 
 class ChangePasswordForm(PasswordChangeForm):
@@ -81,4 +74,3 @@ class ChangePasswordForm(PasswordChangeForm):
     class Meta:
         model = User
         fields = ('old_password', 'new_password1', 'new_password2',)
-

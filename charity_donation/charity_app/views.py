@@ -1,25 +1,19 @@
 import random
 
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse_lazy, reverse
-from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.db.models import Sum
 from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import (
     View,
     FormView,
-    CreateView,
     ListView,
-    UpdateView,
-    DeleteView,
     RedirectView,
 )
 from charity_app.forms import RegisterUserForm, LoginUserForm, DonationForm, ChangePasswordForm
 from charity_app.models import Category, Institution, Donation
 from django.core.paginator import Paginator
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 User = get_user_model()
@@ -107,53 +101,6 @@ class LogoutView(RedirectView):
         return super().get(request, *args, **kwargs)
 
 
-# class AddDonationView(FormView):
-#     template_name = 'form.html'
-#     form_class = DonationForm
-#     success_url = reverse_lazy('confirmation')
-#
-#     def get(self, request):
-#         if request.user.is_authenticated:
-#             categories = Category.objects.all().order_by('name')
-#             institutions = Institution.objects.all().order_by('name')
-#             ctx = {
-#                 "categories": categories,
-#                 "institutions": institutions,
-#             }
-#             return render(request, 'form.html', ctx)
-#         else:
-#             return HttpResponseRedirect(reverse_lazy('login'))
-#
-#     def form_valid(self, request, form):
-#         cd = form.cleaned_data
-#         user = request.user
-#         print('bags: ', cd['bags'])
-#         print('categories: ', cd['categories'])
-#         print('institution: ', cd['institution'])
-#         print('address: ', cd['address'])
-#         print('phone: ', cd['phone'])
-#         print('city: ', cd['city'])
-#         print('postcode: ', cd['postcode'])
-#         print('date: ', cd['date'])
-#         print('time: ', cd['time'])
-#         print('more_info: ', cd['more_info'])
-#         print('user: ', user)
-#
-#         Donation.objects.create(
-#             quantity=cd['bags'],
-#             categories=cd['categories'],
-#             institution=cd['institution'],
-#             address=cd['address'],
-#             phone_number=cd['phone'],
-#             city=cd['city'],
-#             zip_code=cd['postcode'],
-#             pick_up_date=cd['date'],
-#             pick_up_time=cd['time'],
-#             pick_up_comment=cd['more_info'],
-#             user=user,
-#         )
-#         return super().form_valid(form)
-
 class AddDonationView(View):
     template_name = 'form.html'
     form_class = DonationForm
@@ -178,24 +125,20 @@ class AddDonationView(View):
 
         if form.is_valid():
             cd = form.cleaned_data
-            # user = request.user
-            user = 3
-            print('bags: ', cd['quantity'])
-            print('categories: ', cd['categories'])
-            print('institution: ', cd['institution'])
-            print('address: ', cd['address'])
-            print('phone: ', cd['phone_number'])
-            print('city: ', cd['city'])
-            print('postcode: ', cd['zip_code'])
-            print('date: ', cd['pick_up_date'])
-            print('time: ', cd['pick_up_time'])
-            print('more_info: ', cd['pick_up_comment'])
-            print('user: ', user)
+            user = request.user
 
-            Donation.objects.create(
+            institution = cd['institution']
+            institution_instance = Institution.objects.get(name=institution)
+
+            categories = cd['categories']
+            list_categories = []
+            for category in categories:
+                current_category = Category.objects.get(name=category)
+                list_categories.append(current_category)
+
+            donation = Donation.objects.create(
                 quantity=cd['quantity'],
-                categories=cd['categories'],
-                institution=cd['institution'],
+                institution=institution_instance,
                 address=cd['address'],
                 phone_number=cd['phone_number'],
                 city=cd['city'],
@@ -205,10 +148,9 @@ class AddDonationView(View):
                 pick_up_comment=cd['pick_up_comment'],
                 user=user,
             )
-        # ctx = {'form': form}
-        # return render(request, 'form.html', ctx)
+            donation.categories.set(list_categories)
             return HttpResponseRedirect(reverse_lazy('confirmation'))
-        return HttpResponseRedirect(reverse_lazy('login'))
+        return HttpResponseRedirect(reverse_lazy('add-donation'))
 
 
 class ConfirmationView(View):
