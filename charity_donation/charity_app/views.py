@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse_lazy, reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
+from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import (
     View,
     FormView,
@@ -15,7 +16,7 @@ from django.views.generic import (
     DeleteView,
     RedirectView,
 )
-from charity_app.forms import RegisterUserForm, LoginUserForm, DonationForm
+from charity_app.forms import RegisterUserForm, LoginUserForm, DonationForm, ChangePasswordForm
 from charity_app.models import Category, Institution, Donation
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -221,6 +222,7 @@ class UserProfileView(ListView):
 
     def get_context_data(self, **kwargs):
         user = self.request.user
+        print(user.id)
         current_user = User.objects.get(id=user.id)
         user_donation = Donation.objects.get(user=user.id)
 
@@ -229,3 +231,23 @@ class UserProfileView(ListView):
             "user_donation": user_donation
         }
         return ctx
+
+
+class SettingsView(ListView):
+    model = User
+    template_name = 'settings.html'
+
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+        current_user = User.objects.get(id=user.id)
+
+        ctx = {
+            'current_user': current_user,
+        }
+        return ctx
+
+
+class ChangePasswordView(PasswordChangeView):
+    template_name = 'change-password.html'
+    form_class = ChangePasswordForm
+    success_url = reverse_lazy('landing-page')
