@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from .models import Category, Institution, Donation
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.hashers import check_password
 
 User = get_user_model()
 
@@ -73,4 +74,32 @@ class ChangePasswordForm(PasswordChangeForm):
 
     class Meta:
         model = User
-        fields = ('old_password', 'new_password1', 'new_password2',)
+        fields = ('old_password', 'new_password1', 'new_password2', )
+
+
+class UserProfileForm(forms.ModelForm):
+    first_name = forms.CharField(label='Imię', max_length=100, required=True, widget=forms.TextInput(
+        attrs={'placeholder': 'Imię'}))
+    last_name = forms.CharField(label='Nazwisko', max_length=100, required=True, widget=forms.TextInput(
+        attrs={'placeholder': 'Nazwisko'}))
+    email = forms.EmailField(label='Email', max_length=100, required=True, widget=forms.TextInput(
+        attrs={'readonly': True}))
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', )
+
+
+class ConfirmPassword(forms.ModelForm):
+    confirm_password = forms.CharField(min_length=4, max_length=20, widget=forms.PasswordInput(
+        attrs={'placeholder': 'Potwierdź hasło'}))
+
+    class Meta:
+        model = User
+        fields = ('confirm_password', )
+
+    def clean(self):
+        cd = super().clean()
+        confirm_password = cd.get('confirm_password')
+        if not check_password(confirm_password, self.instance.password):
+            self.add_error('confirm_password', 'Hasło nie pasuje')

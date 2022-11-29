@@ -26,6 +26,8 @@ from charity_app.views import (
     UserProfileView,
     SettingsView,
     ChangePasswordView,
+    UpdateUserProfileView,
+    ConfirmPasswordView,
 )
 
 urlpatterns = [
@@ -39,4 +41,6 @@ urlpatterns = [
     path('user_profile/', UserProfileView.as_view(), name='user_profile'),
     path('settings/', SettingsView.as_view(), name='settings'),
     path('change_password/', ChangePasswordView.as_view(), name='change-password'),
+    path('update_profile/<int:user_id>/', UpdateUserProfileView.as_view(), name='update-profile'),
+    path('confirm_password/<int:user_id>/', ConfirmPasswordView.as_view(), name='confirm-password'),
 ]

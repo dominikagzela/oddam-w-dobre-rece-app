@@ -2,7 +2,7 @@ import random
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.db.models import Sum
 from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import (
@@ -10,11 +10,20 @@ from django.views.generic import (
     FormView,
     ListView,
     RedirectView,
+    UpdateView,
 )
-from charity_app.forms import RegisterUserForm, LoginUserForm, DonationForm, ChangePasswordForm
+from charity_app.forms import (
+    RegisterUserForm,
+    LoginUserForm,
+    DonationForm,
+    ChangePasswordForm,
+    UserProfileForm,
+    ConfirmPassword,
+)
 from charity_app.models import Category, Institution, Donation
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 User = get_user_model()
 
@@ -166,16 +175,19 @@ class UserProfileView(ListView):
         user = self.request.user
         print(user.id)
         current_user = User.objects.get(id=user.id)
-        user_donation = Donation.objects.get(user=user.id)
+        user_donations = Donation.objects.filter(user=user.id)
 
         ctx = {
             'current_user': current_user,
-            "user_donation": user_donation
+            "user_donations": user_donations
         }
         return ctx
 
 
+# class SettingsView(PermissionRequiredMixin, ListView):
 class SettingsView(ListView):
+    # permission_required = 'auth.view_user'
+
     model = User
     template_name = 'settings.html'
 
@@ -189,7 +201,35 @@ class SettingsView(ListView):
         return ctx
 
 
+# class UpdateUserProfileView(PermissionRequiredMixin, UpdateView):
+class UpdateUserProfileView(UpdateView):
+    # permission_required = 'auth.change_user'
+
+    model = User
+    template_name = 'update-profile.html'
+    form_class = UserProfileForm
+    success_url = reverse_lazy('settings')
+    pk_url_kwarg = 'user_id'
+
+
+# class ChangePasswordView(PermissionRequiredMixin, PasswordChangeView):
 class ChangePasswordView(PasswordChangeView):
+    # permission_required = 'auth.change_user'
+
     template_name = 'change-password.html'
     form_class = ChangePasswordForm
-    success_url = reverse_lazy('landing-page')
+    success_url = reverse_lazy('settings')
+
+
+# class ConfirmPasswordView(PermissionRequiredMixin, UpdateView):
+class ConfirmPasswordView(UpdateView):
+    # permission_required = 'auth.view_user'
+
+    model = User
+    template_name = 'confirm-password.html'
+    form_class = ConfirmPassword
+    pk_url_kwarg = 'user_id'
+
+    def get_success_url(self, *args, **kwargs):
+        user = self.request.user
+        return reverse('update-profile', args=[user.id])

@@ -16,23 +16,30 @@
         <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
             EMAIL : </span> {{ current_user.username }} </h3>
         <br/>
+        <br/>
+
         <h3 style="text-align: center; font-size: 30px">
             Oddane darowizny:</h3>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
-            ILOŚĆ WORKÓW : </span> {{ user_donation.quantity }} </h3>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
-            KATEGORIE : </span>
-            {% for category in user_donation.categories.all %}
-                {% if forloop.last %}
-                    {{ category.name }}
-                {% else %}
-                    {{ category.name }},
-                {% endif %}
-            {% endfor %}</h3>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
-            DLA ORGANIZACJI : </span> {{ user_donation.institution.name }} </h3>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
-            TERMIN ODBIORU : </span> {{ user_donation.pick_up_date }} godz. {{ user_donation.pick_up_time }}</h3>
+        {% for donation in user_donations %}
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+                ILOŚĆ WORKÓW : </span> {{ donation.quantity }} </h3>
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+                KATEGORIE : </span>
+                {% for category in donation.categories.all %}
+                    {% if forloop.last %}
+                        {{ category.name }}
+                    {% else %}
+                        {{ category.name }},
+                    {% endif %}
+                {% endfor %}</h3>
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+                DLA ORGANIZACJI : </span> {{ donation.institution.name }} </h3>
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+                 TERMIN ODBIORU : </span> {{ donation.pick_up_date }} godz. {{ donation.pick_up_time }}</h3>
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+                ------------------------------------------</span></h3>
+            <br/>
+        {% endfor %}
     </div>
 </section>
 
