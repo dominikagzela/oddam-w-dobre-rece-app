@@ -7,39 +7,56 @@
 
 <section class="login-page">
     <div class="slogan container container--90">
-        <h2>Twój profil</h2>
-        <br/>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
-            IMIĘ : </span> {{ current_user.first_name }} </h3>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
-            NAZWISKO : </span> {{ current_user.last_name }} </h3>
-        <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
-            EMAIL : </span> {{ current_user.username }} </h3>
-        <br/>
-        <br/>
 
-        <h3 style="text-align: center; font-size: 30px">
+        <h2>Twój profil</h2>
+        <div style="margin-top: 50px; margin-bottom: 50px">
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            IMIĘ : </span> {{ current_user.first_name }} </h3>
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            NAZWISKO : </span> {{ current_user.last_name }} </h3>
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
+            EMAIL : </span> {{ current_user.username }} </h3>
+        </div>
+        <h2></h2>
+
+        <h3 style="text-align: center; font-size: 30px; margin-top: 70px">
             Oddane darowizny:</h3>
-        {% for donation in user_donations %}
+
+            {% for donation in user_donations %}
+        <div style="margin-top: 10px; {% if donation.is_taken == True %} color: green; {% endif %}">
             <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
                 ILOŚĆ WORKÓW : </span> {{ donation.quantity }} </h3>
             <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
                 KATEGORIE : </span>
                 {% for category in donation.categories.all %}
-                    {% if forloop.last %}
-                        {{ category.name }}
-                    {% else %}
-                        {{ category.name }},
-                    {% endif %}
+                {% if forloop.last %}
+                {{ category.name }}
+                {% else %}
+                {{ category.name }},
+                {% endif %}
                 {% endfor %}</h3>
             <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
                 DLA ORGANIZACJI : </span> {{ donation.institution.name }} </h3>
             <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
                  TERMIN ODBIORU : </span> {{ donation.pick_up_date }} godz. {{ donation.pick_up_time }}</h3>
+            <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300"></span></h3>
+        </div>
+
+            <div style="margin-top: 10px; width: 100%; display: flex; flex-direction: row; justify-content: center">
+                <form style="margin-top: 10px; width: 100%; display: flex; flex-direction: row; justify-content: center" action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value={{donation.id}}>
+                    <input style="padding: 15px 30px; font-size: 15px; background-color: transparent; box-shadow: 1px 8px 4px 0px rgba(66, 68, 90, 1); margin-right: 10px" type="submit" name="is_taken" value="Niezabrany">
+                    <input style="padding: 15px 30px; font-size: 15px; background-color: transparent; box-shadow: 1px 8px 4px 0px rgba(66, 68, 90, 1);  " type="submit" name="is_taken" value="Zabrany">
+
+                </form>
+            </div>
             <h3 style="text-align: center; font-size: 18px"><span style="font-weight: 300">
-                ------------------------------------------</span></h3>
+                -------------------------------------------</span></h3>
             <br/>
-        {% endfor %}
+
+            {% endfor %}
+
     </div>
 </section>
 

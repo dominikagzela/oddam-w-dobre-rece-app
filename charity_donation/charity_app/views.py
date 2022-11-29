@@ -18,12 +18,12 @@ from charity_app.forms import (
     DonationForm,
     ChangePasswordForm,
     UserProfileForm,
-    ConfirmPassword,
+    ConfirmPasswordForm,
+    IfDonationTakenForm,
 )
 from charity_app.models import Category, Institution, Donation
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model, authenticate, login, logout
-from django.contrib.auth.mixins import PermissionRequiredMixin
 
 User = get_user_model()
 
@@ -167,26 +167,42 @@ class ConfirmationView(View):
         return render(request, 'form-confirmation.html')
 
 
-class UserProfileView(ListView):
-    model = User
+class UserProfileView(UpdateView):
+    model = Donation
     template_name = 'user-profile.html'
+    form_class = IfDonationTakenForm
+    pk_url_kwarg = 'user_id'
 
     def get_context_data(self, **kwargs):
         user = self.request.user
-        print(user.id)
         current_user = User.objects.get(id=user.id)
-        user_donations = Donation.objects.filter(user=user.id)
+        user_donations = Donation.objects.filter(user=user.id).order_by('is_taken')
 
         ctx = {
             'current_user': current_user,
-            "user_donations": user_donations
+            "user_donations": user_donations,
         }
         return ctx
 
+    def post(self, request, *args, **kwargs):
+        is_taken = request.POST.get('is_taken')
+        id = request.POST.get('id')
+        current_donation = Donation.objects.get(id=int(id))
+        print(id, type(id))
+        print(current_donation, type(current_donation.is_taken))
+        if is_taken == 'Niezabrany':
+            current_donation.is_taken = False
+        else:
+            current_donation.is_taken = True
+        current_donation.save()
+        return super().post(request, *args, **kwargs)
 
-# class SettingsView(PermissionRequiredMixin, ListView):
+    def get_success_url(self, *args, **kwargs):
+        user = self.request.user
+        return reverse('user_profile', args=[user.id])
+
+
 class SettingsView(ListView):
-    # permission_required = 'auth.view_user'
 
     model = User
     template_name = 'settings.html'
@@ -201,9 +217,7 @@ class SettingsView(ListView):
         return ctx
 
 
-# class UpdateUserProfileView(PermissionRequiredMixin, UpdateView):
 class UpdateUserProfileView(UpdateView):
-    # permission_required = 'auth.change_user'
 
     model = User
     template_name = 'update-profile.html'
@@ -212,22 +226,18 @@ class UpdateUserProfileView(UpdateView):
     pk_url_kwarg = 'user_id'
 
 
-# class ChangePasswordView(PermissionRequiredMixin, PasswordChangeView):
 class ChangePasswordView(PasswordChangeView):
-    # permission_required = 'auth.change_user'
 
     template_name = 'change-password.html'
     form_class = ChangePasswordForm
     success_url = reverse_lazy('settings')
 
 
-# class ConfirmPasswordView(PermissionRequiredMixin, UpdateView):
 class ConfirmPasswordView(UpdateView):
-    # permission_required = 'auth.view_user'
 
     model = User
     template_name = 'confirm-password.html'
-    form_class = ConfirmPassword
+    form_class = ConfirmPasswordForm
     pk_url_kwarg = 'user_id'
 
     def get_success_url(self, *args, **kwargs):

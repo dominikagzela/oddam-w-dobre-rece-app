@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Category, Institution, Donation
+from .models import Category, Donation
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
@@ -61,7 +61,6 @@ class DonationForm(forms.Form):
     pick_up_date = forms.DateField()
     pick_up_time = forms.TimeField()
     pick_up_comment = forms.CharField()
-    # user = forms.ModelChoiceField(queryset=User.objects.all())
 
 
 class ChangePasswordForm(PasswordChangeForm):
@@ -90,7 +89,7 @@ class UserProfileForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'email', )
 
 
-class ConfirmPassword(forms.ModelForm):
+class ConfirmPasswordForm(forms.ModelForm):
     confirm_password = forms.CharField(min_length=4, max_length=20, widget=forms.PasswordInput(
         attrs={'placeholder': 'Potwierdź hasło'}))
 
@@ -103,3 +102,12 @@ class ConfirmPassword(forms.ModelForm):
         confirm_password = cd.get('confirm_password')
         if not check_password(confirm_password, self.instance.password):
             self.add_error('confirm_password', 'Hasło nie pasuje')
+
+
+class IfDonationTakenForm(forms.ModelForm):
+    id = forms.IntegerField()
+    is_taken = forms.RadioSelect()
+
+    class Meta:
+        model = Donation
+        fields = ('is_taken', 'id', )
