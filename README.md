@@ -1,3 +1,4 @@
+
 # HelpHand - charity app
 
 ## Description:
@@ -39,3 +40,4 @@ You have things at home that you want to get rid of, but don't know how. There a
         <u><br>password:</u> hasloanna1
     2.  <u>login:</u> kasia.kowalczyk@gmail.com
         <u><br>password:</u> kasia
+
